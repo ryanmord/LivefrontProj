@@ -44,19 +44,20 @@ public class DataRetriever {
             .build();
 
 
-    public void fetchFeed(OnFeedDataRetrieved callback) {
+    public void fetchFeed(final OnFeedDataRetrieved callback) {
 
         IFeedCalls calls = retrofit.create(IFeedCalls.class);
         Call<FeedData> call = calls.getFeedItems();
         call.enqueue(new Callback<FeedData>() {
             @Override
             public void onResponse(Call<FeedData> call, Response<FeedData> response) {
-                Log.d("PAYLOAD", response.body().toString());
+                callback.onReceive(response.body());
+
             }
 
             @Override
             public void onFailure(Call<FeedData> call, Throwable t) {
-                Log.d("PAYLOAD", "FAILED");
+                callback.onReceive(null);
             }
         });
     }
