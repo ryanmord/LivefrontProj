@@ -3,8 +3,12 @@ package com.ryanmord.livefrontproj.api;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.ryanmord.livefrontproj.api.serializer.DateTimeSerializer;
 import com.ryanmord.livefrontproj.objects.FeedData;
 import com.ryanmord.livefrontproj.objects.FeedItem;
+
+import org.joda.time.DateTime;
 
 import java.util.List;
 import java.util.Map;
@@ -30,19 +34,19 @@ public class DataRetriever {
     }
 
     private interface IFeedCalls {
-        @GET("/v1/articles?source=techcrunch&sortBy=latest&apiKey=52dabde93cc64788ac49951c32d25d68")
+
+        @GET("/v1/articles?source=associated-press&sortBy=top&apiKey=52dabde93cc64788ac49951c32d25d68")
         Call<FeedData> getFeedItems();
     }
 
-    private Gson g;
-    private String key = "52dabde93cc64788ac49951c32d25d68";
-    private String extra = "/v1/articles?source=techcrunch&sortBy=latest&apiKey=52dabde93cc64788ac49951c32d25d68";
+    private Gson gson = new GsonBuilder()
+            .registerTypeAdapter(DateTime.class, new DateTimeSerializer())
+            .create();
 
     private Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("https://newsapi.org")
-            .addConverterFactory(GsonConverterFactory.create(new Gson()))
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build();
-
 
     public void fetchFeed(final OnFeedDataRetrieved callback) {
 
