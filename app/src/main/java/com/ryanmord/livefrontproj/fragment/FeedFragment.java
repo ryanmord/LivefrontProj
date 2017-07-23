@@ -1,7 +1,9 @@
 package com.ryanmord.livefrontproj.fragment;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -29,11 +31,11 @@ import butterknife.ButterKnife;
  * Created by ryanmord on 7/20/17.
  */
 
-public class FeedFragment extends android.support.v4.app.Fragment implements SwipeRefreshLayout.OnRefreshListener, FeedRecyclerAdapter.OnFeedItemClickListener {
+public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, FeedRecyclerAdapter.OnFeedItemClickListener {
 
     public interface IFeedFragmentCallback {
         void feedItemClicked(FeedItemViewHolder item);
-        void feedRefreshed();
+        boolean feedRefreshed();
     }
 
 
@@ -60,6 +62,7 @@ public class FeedFragment extends android.support.v4.app.Fragment implements Swi
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
     }
 
 
@@ -95,6 +98,9 @@ public class FeedFragment extends android.support.v4.app.Fragment implements Swi
         }
     }
 
+
+
+
     public void setFeedData(List<FeedItem> items) {
         if(mData == null) {
             mData = new ArrayList<>();
@@ -112,7 +118,6 @@ public class FeedFragment extends android.support.v4.app.Fragment implements Swi
 
 
 
-
     @Override
     public void feedItemClicked(FeedItemViewHolder item) {
         if(mCallback != null) {
@@ -120,10 +125,19 @@ public class FeedFragment extends android.support.v4.app.Fragment implements Swi
         }
     }
 
+
+
     @Override
     public void onRefresh() {
         if(mCallback != null) {
-            mCallback.feedRefreshed();
+            boolean requestSuccess = mCallback.feedRefreshed();
+            if(!requestSuccess) {
+                mSwipeRefresh.setRefreshing(false);
+                Snackbar.make(getView(), "No Network Connection!", 2000).show();
+            }
         }
     }
+
+
+
 }

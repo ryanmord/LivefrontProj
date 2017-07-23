@@ -1,15 +1,16 @@
 package com.ryanmord.livefrontproj.fragment;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -50,12 +51,10 @@ public class DetailsFragment extends Fragment {
 
     private FeedItem mItem;
 
-    private String mHeaderTransitionName = "";
 
     public static DetailsFragment newInstance(FeedItem item, String imageTransitionName) {
         DetailsFragment frag = new DetailsFragment();
         frag.mItem = item;
-        frag.mHeaderTransitionName = imageTransitionName;
 
         return frag;
     }
@@ -66,9 +65,6 @@ public class DetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
-        }
     }
 
 
@@ -94,11 +90,11 @@ public class DetailsFragment extends Fragment {
             }
         });
 
-
-        ViewCompat.setTransitionName(mHeaderImage, mHeaderTransitionName);
         Glide.with(getActivity())
                 .load(mItem.mImageUrl)
+                .centerCrop()
                 .into(mHeaderImage);
+
 
         return v;
     }

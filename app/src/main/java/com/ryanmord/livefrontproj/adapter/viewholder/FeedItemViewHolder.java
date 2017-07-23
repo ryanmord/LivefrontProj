@@ -3,6 +3,7 @@ package com.ryanmord.livefrontproj.adapter.viewholder;
 import android.content.Context;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -48,12 +49,27 @@ public class FeedItemViewHolder extends RecyclerView.ViewHolder {
         mItem = item;
 
         mTitle.setText(item.mTitle);
-        mAuthor.setText(item.mAuthor);
-        mDate.setText("");
+        if(!TextUtils.isEmpty(item.mAuthor)) {
+            mAuthor.setVisibility(View.VISIBLE);
+            mAuthor.setText(item.mAuthor);
+        } else {
+            mAuthor.setVisibility(View.GONE);
+        }
 
-        Glide.with(c)
-                .load(item.mImageUrl)
-                .into(mImage);
+        if(item.mPublishDate != null) {
+            mDate.setVisibility(View.VISIBLE);
+            mDate.setText(item.getDateString(c));
+        } else {
+            mDate.setVisibility(View.GONE);
+        }
+
+
+        if(!item.mImageUrl.isEmpty()) {
+            Glide.with(c)
+                    .load(item.mImageUrl)
+                    .asBitmap()
+                    .into(mImage);
+        }
     }
 
     public FeedItem getFeedItem() {

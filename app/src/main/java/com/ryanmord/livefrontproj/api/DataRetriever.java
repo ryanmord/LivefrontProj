@@ -1,5 +1,8 @@
 package com.ryanmord.livefrontproj.api;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -35,7 +38,7 @@ public class DataRetriever {
 
     private interface IFeedCalls {
 
-        @GET("/v1/articles?source=associated-press&sortBy=top&apiKey=52dabde93cc64788ac49951c32d25d68")
+        @GET("/v1/articles?source=cnn&sortBy=top&apiKey=52dabde93cc64788ac49951c32d25d68")
         Call<FeedData> getFeedItems();
     }
 
@@ -48,22 +51,41 @@ public class DataRetriever {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build();
 
-    public void fetchFeed(final OnFeedDataRetrieved callback) {
 
-        IFeedCalls calls = retrofit.create(IFeedCalls.class);
-        Call<FeedData> call = calls.getFeedItems();
-        call.enqueue(new Callback<FeedData>() {
-            @Override
-            public void onResponse(Call<FeedData> call, Response<FeedData> response) {
-                callback.onReceive(response.body());
+    private Context c;
 
-            }
 
-            @Override
-            public void onFailure(Call<FeedData> call, Throwable t) {
-                callback.onReceive(null);
-            }
-        });
+    public DataRetriever(Context context) {
+        c = context;
+    }
+
+
+
+
+    public boolean fetchFeed(final OnFeedDataRetrieved callback) {
+        ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+        if(isConnected) {
+            IFeedCalls calls = retrofit.create(IFeedCalls.class);
+            Call<FeedData> call = calls.getFeedItems();
+            call.enqueue(new Callback<FeedData>() {
+                @Override
+                public void onResponse(Call<FeedData> call, Response<FeedData> response) {
+                    callback.onReceive(response.body());
+
+                }
+
+                @Override
+                public void onFailure(Call<FeedData> call, Throwable t) {
+                    callback.onReceive(null);
+                }
+            });
+        }
+
+        return isConnected;
     }
 
 }
