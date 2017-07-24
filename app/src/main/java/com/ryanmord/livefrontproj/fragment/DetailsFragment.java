@@ -106,8 +106,6 @@ public class DetailsFragment extends Fragment {
                 .centerCrop()
                 .into(mHeaderImage);
 
-        animateFabIn();
-
         return v;
     }
 
@@ -123,17 +121,43 @@ public class DetailsFragment extends Fragment {
         }
     }
 
-
-
     @Override
-    public void onPause() {
-        super.onPause();
+    public void setSharedElementEnterTransition(Transition transition) {
+        super.setSharedElementEnterTransition(transition);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            transition.addListener(new Transition.TransitionListener() {
+                @Override
+                public void onTransitionStart(Transition transition) {
+                }
+
+                @Override
+                public void onTransitionEnd(Transition transition) {
+                    animateFabIn();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        transition.removeListener(this);
+                    }
+                }
+
+                @Override
+                public void onTransitionCancel(Transition transition) {
+                }
+
+                @Override
+                public void onTransitionPause(Transition transition) {
+                }
+
+                @Override
+                public void onTransitionResume(Transition transition) {
+                }
+            });
+        }
     }
+
 
     public void animateFabIn() {
         Animation a = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_right);
-        a.setDuration(1000);
         mActionButton.startAnimation(a);
+        mActionButton.setVisibility(View.VISIBLE);
     }
 
     private void animateFabOut(Animation.AnimationListener listener) {

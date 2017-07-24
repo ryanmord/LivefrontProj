@@ -54,6 +54,7 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
 
         android.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.add(R.id.base_fragment_holder, mFeedFragment)
+                .addToBackStack(null)
                 .commit();
 
         fetchData();
@@ -68,7 +69,6 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch(item.getItemId()) {
 
             case android.R.id.home:
@@ -79,7 +79,6 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
                 return super.onOptionsItemSelected(item);
 
         }
-
     }
 
     @Override
@@ -92,6 +91,8 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
 
             Transition moveTransform = TransitionInflater.from(this).inflateTransition(R.transition.move_transition);
             Transition fadeTransform = TransitionInflater.from(this).inflateTransition(android.R.transition.fade);
+
+            fadeTransform.excludeTarget(R.id.bar_layout, true);
 
             mFeedFragment.setSharedElementReturnTransition(moveTransform);
             mFeedFragment.setExitTransition(fadeTransform);

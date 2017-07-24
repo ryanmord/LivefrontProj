@@ -94,7 +94,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         ActionBar t = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if(t != null) {
             t.setDisplayHomeAsUpEnabled(false);
-            t.setTitle("Feed");
+            t.setTitle("");
         }
     }
 
