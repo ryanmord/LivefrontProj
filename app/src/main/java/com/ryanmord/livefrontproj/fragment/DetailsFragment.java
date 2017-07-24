@@ -10,14 +10,17 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.transition.TransitionInflater;
+import android.text.TextUtils;
+import android.transition.Transition;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -50,11 +53,13 @@ public class DetailsFragment extends Fragment {
     TextView    mSummary;
 
     private FeedItem mItem;
+    private String mHeaderTransitionName = "";
 
 
     public static DetailsFragment newInstance(FeedItem item, String imageTransitionName) {
         DetailsFragment frag = new DetailsFragment();
         frag.mItem = item;
+        frag.mHeaderTransitionName = imageTransitionName;
 
         return frag;
     }
@@ -64,9 +69,7 @@ public class DetailsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
     }
-
 
     @Nullable
     @Override
@@ -74,10 +77,17 @@ public class DetailsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_details, container, false);
         ButterKnife.bind(this, v);
 
-        String subString = String.format("%s by %s", mItem.getDateString(getActivity()), mItem.mAuthor);
+        StringBuilder s = new StringBuilder();
+        if(mItem.mPublishDate != null) {
+            s.append(String.format("%s", mItem.getDateString(getActivity())));
+        }
+
+        if(mItem.mAuthor != null) {
+            s.append(String.format(TextUtils.isEmpty(s) ? "By " : " by %s", mItem.mAuthor));
+        }
 
         mTitle.setText(mItem.mTitle);
-        mSubtext.setText(subString);
+        mSubtext.setText(s.toString());
         mSummary.setText(mItem.mDescription);
 
         mActionButton.setOnClickListener(new View.OnClickListener() {
@@ -90,11 +100,13 @@ public class DetailsFragment extends Fragment {
             }
         });
 
+        ViewCompat.setTransitionName(mHeaderImage, mHeaderTransitionName);
         Glide.with(getActivity())
                 .load(mItem.mImageUrl)
                 .centerCrop()
                 .into(mHeaderImage);
 
+        animateFabIn();
 
         return v;
     }
@@ -111,8 +123,23 @@ public class DetailsFragment extends Fragment {
         }
     }
 
+
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+    public void onPause() {
+        super.onPause();
+    }
+
+    public void animateFabIn() {
+        Animation a = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_right);
+        a.setDuration(1000);
+        mActionButton.startAnimation(a);
+    }
+
+    private void animateFabOut(Animation.AnimationListener listener) {
+        Animation a = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_out_right);
+        a.setAnimationListener(listener);
+        a.setDuration(1000);
+        mActionButton.startAnimation(a);
     }
 }

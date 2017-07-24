@@ -1,24 +1,17 @@
 package com.ryanmord.livefrontproj.activity;
 
 import android.app.FragmentTransaction;
-import android.os.Build;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.transition.Fade;
-import android.view.Gravity;
+import android.transition.ChangeImageTransform;
+import android.transition.Explode;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.TextSwitcher;
-import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import com.ryanmord.livefrontproj.R;
 import com.ryanmord.livefrontproj.adapter.viewholder.FeedItemViewHolder;
@@ -39,6 +32,9 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
+    @BindView(R.id.bar_layout)
+    AppBarLayout mBarLayout;
+
     FeedFragment mFeedFragment;
 
     private DataRetriever mDataRetriever;
@@ -53,16 +49,12 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
 
-
-
         mDataRetriever = new DataRetriever(this);
-
         mFeedFragment = FeedFragment.newInstance(BaseActivity.this);
 
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        android.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.add(R.id.base_fragment_holder, mFeedFragment)
                 .commit();
-
 
         fetchData();
     }
@@ -95,12 +87,29 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
         DetailsFragment d = DetailsFragment.newInstance(item.getFeedItem(), ViewCompat.getTransitionName(item.mImage));
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out,
-                android.R.animator.fade_in, android.R.animator.fade_out);
 
-        transaction.add(R.id.base_fragment_holder, d)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+
+            Transition moveTransform = TransitionInflater.from(this).inflateTransition(R.transition.move_transition);
+            Transition fadeTransform = TransitionInflater.from(this).inflateTransition(android.R.transition.fade);
+
+            mFeedFragment.setSharedElementReturnTransition(moveTransform);
+            mFeedFragment.setExitTransition(fadeTransform);
+
+            d.setSharedElementEnterTransition(moveTransform);
+            d.setEnterTransition(fadeTransform);
+
+            d.setSharedElementEnterTransition(moveTransform);
+            d.setEnterTransition(new android.transition.Fade(android.transition.Fade.IN));
+
+            transaction.addSharedElement(item.mImage, ViewCompat.getTransitionName(item.mImage));
+        }
+
+        transaction.replace(R.id.base_fragment_holder, d)
                 .addToBackStack(null)
                 .commit();
+
+        mBarLayout.setExpanded(true, true);
     }
 
     @Override

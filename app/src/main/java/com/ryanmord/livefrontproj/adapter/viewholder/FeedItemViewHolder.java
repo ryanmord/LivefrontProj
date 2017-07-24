@@ -26,13 +26,10 @@ public class FeedItemViewHolder extends RecyclerView.ViewHolder {
     private FeedItem mItem;
 
     @BindView(R.id.item_image)
-    public CircleImageView mImage;
+    public ImageView mImage;
 
     @BindView(R.id.item_title)
     public TextView mTitle;
-
-    @BindView(R.id.item_author)
-    public TextView mAuthor;
 
     @BindView(R.id.item_date)
     public TextView mDate;
@@ -49,12 +46,6 @@ public class FeedItemViewHolder extends RecyclerView.ViewHolder {
         mItem = item;
 
         mTitle.setText(item.mTitle);
-        if(!TextUtils.isEmpty(item.mAuthor)) {
-            mAuthor.setVisibility(View.VISIBLE);
-            mAuthor.setText(item.mAuthor);
-        } else {
-            mAuthor.setVisibility(View.GONE);
-        }
 
         if(item.mPublishDate != null) {
             mDate.setVisibility(View.VISIBLE);

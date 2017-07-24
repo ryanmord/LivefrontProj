@@ -14,10 +14,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import com.ryanmord.livefrontproj.R;
 import com.ryanmord.livefrontproj.adapter.FeedRecyclerAdapter;
-import com.ryanmord.livefrontproj.adapter.OffsetDividerDecorator;
 import com.ryanmord.livefrontproj.adapter.viewholder.FeedItemViewHolder;
 import com.ryanmord.livefrontproj.objects.FeedItem;
 
@@ -77,9 +77,9 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mAdapter.setData(mData);
         mAdapter.setItemClickListener(this);
 
+        mFeedRecycler.setHasFixedSize(true);
         mFeedRecycler.setLayoutManager(m);
         mFeedRecycler.setAdapter(mAdapter);
-        mFeedRecycler.addItemDecoration(new OffsetDividerDecorator(getActivity()));
 
         mSwipeRefresh.setOnRefreshListener(this);
 
@@ -106,11 +106,32 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             mData = new ArrayList<>();
         }
 
+        mData.clear();
         mData.addAll(items);
 
         if(mAdapter != null) {
             mAdapter.setData(mData);
             mAdapter.notifyDataSetChanged();
+
+            mFeedRecycler.getViewTreeObserver().addOnPreDrawListener(
+                    new ViewTreeObserver.OnPreDrawListener() {
+
+                        @Override
+                        public boolean onPreDraw() {
+                            mFeedRecycler.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                            for (int i = 0; i < mFeedRecycler.getChildCount(); i++) {
+                                View v = mFeedRecycler.getChildAt(i);
+                                v.setAlpha(0.0f);
+                                v.animate().alpha(1.0f)
+                                        .setDuration(300)
+                                        .setStartDelay(i * 50)
+                                        .start();
+                            }
+
+                            return true;
+                        }
+                    });
         }
 
         mSwipeRefresh.setRefreshing(false);
