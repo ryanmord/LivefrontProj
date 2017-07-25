@@ -36,7 +36,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public interface IFeedFragmentCallback {
         void feedItemClicked(FeedItemViewHolder item);
-        boolean refreshFeed();
+        void refreshFeed();
     }
 
 
@@ -155,11 +155,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onRefresh() {
         if(mCallback != null) {
-            boolean requestSuccess = mCallback.refreshFeed();
-            if(!requestSuccess) {
-                mSwipeRefresh.setRefreshing(false);
-                showErrorSnackbar();
-            }
+            mCallback.refreshFeed();
         }
     }
 

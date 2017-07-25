@@ -1,52 +1,78 @@
 package com.ryanmord.livefrontproj.adapter.viewholder;
 
 import android.content.Context;
-import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ryanmord.livefrontproj.R;
 import com.ryanmord.livefrontproj.objects.FeedItem;
-import com.ryanmord.livefrontproj.widget.CircleImageView;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by ryanmord on 7/21/17.
+ * Viewholder class used by FeedRecyclerAdapter for individual feed items
  */
 
 public class FeedItemViewHolder extends RecyclerView.ViewHolder {
 
-    private View mItemView;
+    /**
+     * FeedItem object containing item data
+     * to be displayed
+     */
     private FeedItem mItem;
 
+
+    /**
+     * ImageView for displaying article header-image
+     */
     @BindView(R.id.item_image)
     public ImageView mImage;
 
+    /**
+     * TextView holding the title text
+     */
     @BindView(R.id.item_title)
-    public TextView mTitle;
+    TextView mTitle;
 
+    /**
+     * TextView holding time since published
+     */
     @BindView(R.id.item_date)
-    public TextView mDate;
+    TextView mDate;
 
 
+    /**
+     * Instantiate new FeedItemViewHolder with given view
+     *
+     * @param itemView  Inflated view to be bound
+     */
     public FeedItemViewHolder(View itemView) {
         super(itemView);
-        mItemView = itemView;
 
         ButterKnife.bind(this, itemView);
     }
 
+
+    /**
+     * Set and format ViewHolder with data contained in
+     * given FeedItem
+     *
+     * @param c     Context for image loading.
+     * @param item  FeedItem object containing data to be
+     *              shown.
+     */
     public void setFeedItem(Context c, FeedItem item) {
         mItem = item;
 
+        //Set title text
         mTitle.setText(item.mTitle);
 
+        //If item has publish date, set string and visibility.
+        //Otherwise hide date text
         if(item.mPublishDate != null) {
             mDate.setVisibility(View.VISIBLE);
             mDate.setText(item.getDateString(c));
@@ -54,13 +80,14 @@ public class FeedItemViewHolder extends RecyclerView.ViewHolder {
             mDate.setVisibility(View.GONE);
         }
 
-
+        //Load image into view
         if(!item.mImageUrl.isEmpty()) {
             Picasso.with(c)
                     .load(item.mImageUrl)
                     .into(mImage);
         }
     }
+
 
     public FeedItem getFeedItem() {
         return mItem;

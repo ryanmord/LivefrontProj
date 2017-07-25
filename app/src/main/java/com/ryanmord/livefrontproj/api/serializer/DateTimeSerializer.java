@@ -25,18 +25,47 @@ import org.joda.time.format.DateTimeFormatter;
 import java.lang.reflect.Type;
 
 
-
+/**
+ * Custom serializer for for converting JSON date data into DateTime objects,
+ * and vise-versa.
+ */
 public class DateTimeSerializer implements JsonSerializer<DateTime>, JsonDeserializer<DateTime> {
 
+    /**
+     * Format of date items in JSON responses
+     */
     private final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
+    /**
+     * DateTimeFormatter used to convert Date objects to JsonElements
+     */
     private final DateTimeFormatter UTC_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT).withZone(DateTimeZone.UTC);
 
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param src       Source object to serialize
+     * @param typeOfSrc Type of the source object
+     * @param context   Context for serialization
+     *
+     * @return  Fully-serialized JsonElement for passed source item
+     */
     @Override
     public JsonElement serialize(DateTime src, Type typeOfSrc, JsonSerializationContext context) {
         String dateString = UTC_FORMATTER.print(src);
         return new JsonPrimitive(dateString);
     }
 
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param json      Json data to be deserialized to java object
+     * @param typeOfT   Type of object to be deserialized into
+     * @param context   Context for deserialization
+     * @return
+     */
     @Override
     public DateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
         String date = json.getAsJsonPrimitive().getAsString();

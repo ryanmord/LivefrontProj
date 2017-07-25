@@ -15,25 +15,56 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by ryanmord on 7/21/17.
+ * Adapter to be used on the RecyclerView on the FeedFragment
  */
-
 public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedItemViewHolder> {
 
+    /**
+     * Interface for notifying of item click events
+     */
     public interface OnFeedItemClickListener {
+
+        /**
+         * Called whenever a recycler item is clicked
+         *
+         * @param item  FeedItem containing data corresponding to the
+         *              item that was clicked
+         */
         void feedItemClicked(FeedItemViewHolder item);
     }
 
 
+    /**
+     * Application context
+     */
     private Context mContext;
+
+    /**
+     * Click listener to notify of click events
+     */
     private OnFeedItemClickListener mClickListener;
+
+    /**
+     * Data currently being represented by the adapter.
+     */
     private List<FeedItem> mData = new ArrayList<>();
 
 
+    /**
+     * Instantiate new Adapter
+     *
+     * @param c Application context
+     */
     public FeedRecyclerAdapter(Context c) {
         mContext = c;
     }
 
+
+    /**
+     * Set structure of FeedItems for use in adapter
+     *
+     * @param data  Items/Data to use in view population
+     */
     public void setData(List<FeedItem> data) {
         mData.clear();
 
@@ -44,11 +75,25 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedItemViewHolder
         notifyDataSetChanged();
     }
 
+
+    /**
+     * Set listener to notify on click events
+     *
+     * @param listener  Listener to notify
+     */
     public void setItemClickListener(OnFeedItemClickListener listener) {
         mClickListener = listener;
     }
 
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param parent    ViewGroup being inflated into
+     * @param viewType  Identifier for type of ViewHolder to create
+     *
+     * @return  ViewHolder item to use in RecyclerView
+     */
     @Override
     public FeedItemViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_feed_item, parent, false);
@@ -56,6 +101,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedItemViewHolder
         return new FeedItemViewHolder(v);
     }
 
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param holder    Holder to populate with data
+     * @param position  Position of holder in adapter
+     */
     @Override
     public void onBindViewHolder(final FeedItemViewHolder holder, int position) {
         FeedItem currentItem = mData.get(position);
@@ -74,7 +126,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedItemViewHolder
     }
 
 
-
+    /**
+     * {@inheritDoc}
+     * @return  Number of items in the adapter
+     */
     @Override
     public int getItemCount() {
         return mData.size();

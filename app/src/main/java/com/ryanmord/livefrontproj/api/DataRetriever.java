@@ -27,51 +27,83 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 
 /**
- * Created by ryanmord on 7/20/17.
+ * Class used for API calls, data retrieval, and Json parsing.
  */
-
 public class DataRetriever {
 
+    /**
+     * Interface for notifying when network call has completed
+     */
     public interface OnFeedDataRetrieved {
+
+        /**
+         * Called when an API call finishes.
+         *
+         * @param data  FeedData object with data set according
+         *              to success, failure, or error.
+         *
+         *              ON SUCCESS data will present and 'articles' variable will contain
+         *              structure of items.
+         *
+         *              ON FAILURE, FeedData item will be null.
+         *
+         *              ON ERROR, 'error' field in FeedData item will be set to true. Errors limited
+         *              to network connectivity problems at this time
+         */
         void onReceive(FeedData data);
     }
 
-    private interface IFeedCalls {
 
-        @GET("/v1/articles?source=cnn&sortBy=top&apiKey=52dabde93cc64788ac49951c32d25d68")
-        Call<FeedData> getFeedItems();
-    }
-
+    /**
+     * Gson instance used with Retrofit to parse JSON responses into
+     * java objects. Configured with custom serializer for handling
+     * DateTime objects
+     */
     private Gson gson = new GsonBuilder()
             .registerTypeAdapter(DateTime.class, new DateTimeSerializer())
             .create();
 
+    /**
+     * Retrofit instance to perform network calls and handle
+     * responses
+     */
     private Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("https://newsapi.org")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build();
 
-
+    /**
+     * Application context.
+     */
     private Context c;
 
 
+    /**
+     * Instantiate new DataRetriever
+     *
+     * @param context   Application context
+     */
     public DataRetriever(Context context) {
         c = context;
     }
 
 
-
-
-    public boolean fetchFeed(final OnFeedDataRetrieved callback) {
+    /**
+     * Method to perform API call for new feed data.
+     *
+     * @param callback  Callback to notify when call completes.
+     */
+    public void fetchFeed(final OnFeedDataRetrieved callback) {
+        //Get connectivity status
         ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
-
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
         if(isConnected) {
-            IFeedCalls calls = retrofit.create(IFeedCalls.class);
+            APICalls calls = retrofit.create(APICalls.class);
             Call<FeedData> call = calls.getFeedItems();
             call.enqueue(new Callback<FeedData>() {
+
                 @Override
                 public void onResponse(Call<FeedData> call, Response<FeedData> response) {
                     callback.onReceive(response.body());
@@ -84,12 +116,13 @@ public class DataRetriever {
                 }
             });
         } else {
+            //instantiate new FeedData with error set to false
+            //for fragment handling.
             FeedData errorData = new FeedData();
             errorData.error = true;
             callback.onReceive(errorData);
         }
 
-        return isConnected;
     }
 
 }

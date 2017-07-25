@@ -8,13 +8,11 @@
     android:background="?attr/selectableItemBackground"
     app:cardUseCompatPadding="true">
 
-
     <ImageView
         android:id="@+id/item_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"/>
-
 
     <LinearLayout
         android:id="@+id/linearLayout"

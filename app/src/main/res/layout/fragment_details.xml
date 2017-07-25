@@ -17,7 +17,7 @@
             android:layout_height="225dp"
             android:scaleType="centerCrop"
             android:background="@color/divider_gray"
-            android:transitionName="item_image" />
+            android:transitionName="item_image"/>
 
         <RelativeLayout
             android:layout_width="match_parent"

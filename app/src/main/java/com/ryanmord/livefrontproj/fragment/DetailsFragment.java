@@ -12,7 +12,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.transition.Transition;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,32 +31,69 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by ryanmord on 7/20/17.
+ * Fragment for displaying more detailed information for a specific article.
  */
-
 public class DetailsFragment extends Fragment {
 
+    /**
+     * ImageView for article image. (Shared Element)
+     */
     @BindView(R.id.details_header_image)
     ImageView mHeaderImage;
 
+    /**
+     * Floating action button for full article navigation
+     */
     @BindView(R.id.details_fab)
     FloatingActionButton mActionButton;
 
+    /**
+     * TextView for displaying article title
+     */
     @BindView(R.id.details_title)
     TextView    mTitle;
 
+    /**
+     * TextView for time/author subtext
+     */
     @BindView(R.id.details_subtext)
     TextView    mSubtext;
 
+    /**
+     * TextView for article description
+     */
     @BindView(R.id.details_summary)
     TextView    mSummary;
 
+    /**
+     * FeedItem being represented by this fragment
+     */
     private FeedItem mItem;
+
+    /**
+     * String value holding the name of the shared element
+     * coming from the FeedFragment. This must be set
+     * dynamically since each item in the FeedRecycler has
+     * a different transition name.
+     */
     private String mHeaderTransitionName = "";
 
+    /**
+     * Boolean indicating if exit animations are currently
+     * in progress. Used to prevent multiple back arrow clicks while
+     * animation is happening.
+     */
     private boolean mIsExiting = false;
 
 
+    /**
+     * Create new details fragment for the given FeedItem.
+     *
+     * @param item  FeedItem object containing the data to be displayed
+     * @param imageTransitionName   Transition name of the incoming image being shared
+     *                              from FeedFragment
+     * @return
+     */
     public static DetailsFragment newInstance(FeedItem item, String imageTransitionName) {
         DetailsFragment frag = new DetailsFragment();
         frag.mItem = item;
@@ -67,9 +103,18 @@ public class DetailsFragment extends Fragment {
     }
 
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param item  MenuItem that was clicked
+     *
+     * @return  True if this class handled to selection,
+     *          false otherwise.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+        //If exiting is being performed, dont initialize animations
         if(!mIsExiting) {
             mIsExiting = true;
             animateFabOut(new Animation.AnimationListener() {
@@ -81,7 +126,6 @@ public class DetailsFragment extends Fragment {
                 public void onAnimationEnd(Animation animation) {
                     mIsExiting = false;
                     getFragmentManager().popBackStack();
-
                 }
                 @Override
                 public void onAnimationRepeat(Animation animation) {
@@ -93,18 +137,33 @@ public class DetailsFragment extends Fragment {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     * @param savedInstanceState Bundle containing saved instance data
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param inflater  LayoutInflater to inflate fragment view
+     * @param container Parent container view to hold fragment
+     * @param savedInstanceState    Bundle holding saved instance data
+     *
+     * @return  Inflated fragment view.
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_details, container, false);
         ButterKnife.bind(this, v);
 
+        //Build details string.
         StringBuilder s = new StringBuilder();
         if(mItem.mPublishDate != null) {
             s.append(String.format("%s", mItem.getDateString(getActivity())));
@@ -114,10 +173,13 @@ public class DetailsFragment extends Fragment {
             s.append(String.format(TextUtils.isEmpty(s) ? "By " : " by %s", mItem.mAuthor));
         }
 
+        //Populate TextViews
         mTitle.setText(mItem.mTitle);
         mSubtext.setText(s.toString());
         mSummary.setText(mItem.mDescription);
 
+        //Set click listener to launch browser and navigate to full
+        //article via provided URL
         mActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,10 +188,12 @@ public class DetailsFragment extends Fragment {
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 startActivity(i);
+
             }
         });
 
 
+        //Set shared transition name of header image.
         ViewCompat.setTransitionName(mHeaderImage, mHeaderTransitionName);
         Picasso.with(getActivity())
                 .load(mItem.mImageUrl)
@@ -139,6 +203,12 @@ public class DetailsFragment extends Fragment {
     }
 
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param menu  Menu to populate
+     * @param inflater  Inflater to inflate menu resources
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -150,6 +220,15 @@ public class DetailsFragment extends Fragment {
         }
     }
 
+
+    /**
+     * {@inheritDoc}
+     *
+     * Overridden to apply listener for further animations once
+     * image has been set.
+     *
+     * @param transition    Enter transition being set on this fragment
+     */
     @Override
     public void setSharedElementEnterTransition(Transition transition) {
         super.setSharedElementEnterTransition(transition);
@@ -183,14 +262,22 @@ public class DetailsFragment extends Fragment {
     }
 
 
+    /**
+     * Perform animation to show the floating action button
+     */
     public void animateFabIn() {
-        Animation a = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_right);
+        Animation a = AnimationUtils.loadAnimation(getActivity(), R.anim.roll_in_right);
         mActionButton.startAnimation(a);
         mActionButton.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Perform animation to remove the floating action button from view
+     *
+     * @param listener  Listener to set on animation
+     */
     private void animateFabOut(Animation.AnimationListener listener) {
-        Animation a = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_out_right);
+        Animation a = AnimationUtils.loadAnimation(getActivity(), R.anim.roll_out_right);
         a.setAnimationListener(listener);
         mActionButton.startAnimation(a);
     }
