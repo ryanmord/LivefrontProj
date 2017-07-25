@@ -16,6 +16,9 @@ import com.ryanmord.livefrontproj.api.DataRetriever.OnFeedDataRetrieved;
 import com.ryanmord.livefrontproj.fragment.DetailsFragment;
 import com.ryanmord.livefrontproj.fragment.FeedFragment;
 import com.ryanmord.livefrontproj.objects.FeedData;
+import com.ryanmord.livefrontproj.objects.FeedItem;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -80,7 +83,7 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
     @Override
     public void feedItemClicked(FeedItemViewHolder item) {
         //Create new DetailsFragment and pass transition name of the image being shared
-        DetailsFragment d = DetailsFragment.newInstance(item.getFeedItem(), ViewCompat.getTransitionName(item.mImage));
+        DetailsFragment d = DetailsFragment.newInstance(item.getFeedItem(), ViewCompat.getTransitionName(item.getImage()));
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
@@ -100,7 +103,7 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
             d.setEnterTransition(new android.transition.Fade(android.transition.Fade.IN));
 
             //Set element to be shared between fragments
-            transaction.addSharedElement(item.mImage, ViewCompat.getTransitionName(item.mImage));
+            transaction.addSharedElement(item.getImage(), ViewCompat.getTransitionName(item.getImage()));
         }
 
         //Commit transaction and expand bar layout
@@ -133,15 +136,14 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
      *  {@inheritDoc}
      */
     @Override
-    public void onReceive(FeedData data) {
+    public void onReceive(boolean error, List<FeedItem> data) {
 
-        //If data retrieval was successful
-        if(data != null && data.articles != null) {
-            mFeedFragment.setFeedData(data.articles);
-        } else {
-            //Otherwise instruct the FeedFragment to show
-            //appropriate error indicator
+        //If data retrieval was unsuccessful
+        if(error || data == null) {
             mFeedFragment.showErrorSnackbar();
+        } else {
+            //Otherwise set feed data
+            mFeedFragment.setFeedData(data);
         }
 
     }

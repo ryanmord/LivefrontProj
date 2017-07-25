@@ -8,8 +8,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ryanmord.livefrontproj.api.serializer.DateTimeSerializer;
 import com.ryanmord.livefrontproj.objects.FeedData;
+import com.ryanmord.livefrontproj.objects.FeedItem;
 
 import org.joda.time.DateTime;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,7 +44,7 @@ public class DataRetriever {
          *              ON ERROR, 'error' field in FeedData item will be set to true. Errors limited
          *              to network connectivity problems at this time
          */
-        void onReceive(FeedData data);
+        void onReceive(boolean error, List<FeedItem> data);
     }
 
 
@@ -97,21 +100,17 @@ public class DataRetriever {
 
                 @Override
                 public void onResponse(Call<FeedData> call, Response<FeedData> response) {
-                    callback.onReceive(response.body());
+                    callback.onReceive(false, response.body().getArticles());
 
                 }
 
                 @Override
                 public void onFailure(Call<FeedData> call, Throwable t) {
-                    callback.onReceive(null);
+                    callback.onReceive(true, null);
                 }
             });
         } else {
-            //instantiate new FeedData with error set to false
-            //for fragment handling.
-            FeedData errorData = new FeedData();
-            errorData.error = true;
-            callback.onReceive(errorData);
+            callback.onReceive(true, null);
         }
 
     }

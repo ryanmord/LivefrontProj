@@ -163,6 +163,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onStart() {
         super.onStart();
         if(mCallback != null) {
+            mSwipeRefresh.setRefreshing(true);
             mCallback.refreshFeed();
         }
     }
