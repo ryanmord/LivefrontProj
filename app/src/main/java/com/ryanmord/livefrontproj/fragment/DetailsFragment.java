@@ -24,9 +24,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.ryanmord.livefrontproj.R;
 import com.ryanmord.livefrontproj.objects.FeedItem;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,6 +55,8 @@ public class DetailsFragment extends Fragment {
     private FeedItem mItem;
     private String mHeaderTransitionName = "";
 
+    private boolean mIsExiting = false;
+
 
     public static DetailsFragment newInstance(FeedItem item, String imageTransitionName) {
         DetailsFragment frag = new DetailsFragment();
@@ -64,6 +66,32 @@ public class DetailsFragment extends Fragment {
         return frag;
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if(!mIsExiting) {
+            mIsExiting = true;
+            animateFabOut(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    mIsExiting = false;
+                    getFragmentManager().popBackStack();
+
+                }
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+        }
+
+        return true;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,6 +121,7 @@ public class DetailsFragment extends Fragment {
         mActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String url = mItem.mArticleUrl;
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
@@ -100,10 +129,10 @@ public class DetailsFragment extends Fragment {
             }
         });
 
+
         ViewCompat.setTransitionName(mHeaderImage, mHeaderTransitionName);
-        Glide.with(getActivity())
+        Picasso.with(getActivity())
                 .load(mItem.mImageUrl)
-                .centerCrop()
                 .into(mHeaderImage);
 
         return v;
@@ -117,7 +146,7 @@ public class DetailsFragment extends Fragment {
         ActionBar t = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if(t != null) {
             t.setDisplayHomeAsUpEnabled(true);
-            t.setTitle("Details");
+            t.setDisplayShowTitleEnabled(false);
         }
     }
 
@@ -163,7 +192,6 @@ public class DetailsFragment extends Fragment {
     private void animateFabOut(Animation.AnimationListener listener) {
         Animation a = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_out_right);
         a.setAnimationListener(listener);
-        a.setDuration(1000);
         mActionButton.startAnimation(a);
     }
 }

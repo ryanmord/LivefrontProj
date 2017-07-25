@@ -6,11 +6,8 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.transition.ChangeImageTransform;
-import android.transition.Explode;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
-import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import com.ryanmord.livefrontproj.R;
@@ -52,34 +49,12 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
         mDataRetriever = new DataRetriever(this);
         mFeedFragment = FeedFragment.newInstance(BaseActivity.this);
 
+
         android.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.add(R.id.base_fragment_holder, mFeedFragment)
-                .addToBackStack(null)
                 .commit();
-
-        fetchData();
     }
 
-
-    private boolean fetchData() {
-        return mDataRetriever.fetchFeed(this);
-    }
-
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-
-            case android.R.id.home:
-                getFragmentManager().popBackStack();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
 
     @Override
     public void feedItemClicked(FeedItemViewHolder item) {
@@ -89,10 +64,8 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 
-            Transition moveTransform = TransitionInflater.from(this).inflateTransition(R.transition.move_transition);
+            Transition moveTransform = TransitionInflater.from(this).inflateTransition(android.R.transition.move);
             Transition fadeTransform = TransitionInflater.from(this).inflateTransition(android.R.transition.fade);
-
-            fadeTransform.excludeTarget(R.id.bar_layout, true);
 
             mFeedFragment.setSharedElementReturnTransition(moveTransform);
             mFeedFragment.setExitTransition(fadeTransform);
@@ -113,14 +86,24 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
         mBarLayout.setExpanded(true, true);
     }
 
+
+
+
     @Override
-    public boolean feedRefreshed() {
-        return fetchData();
+    public boolean refreshFeed() {
+        return mDataRetriever.fetchFeed(this);
     }
+
+
+
 
     @Override
     public void onReceive(FeedData data) {
-        mFeedFragment.setFeedData(data.articles);
+        if(data != null && data.articles != null) {
+            mFeedFragment.setFeedData(data.articles);
+        } else {
+            mFeedFragment.showErrorSnackbar();
+        }
     }
 
 

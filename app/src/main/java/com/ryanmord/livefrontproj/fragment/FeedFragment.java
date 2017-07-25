@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Toast;
 
 import com.ryanmord.livefrontproj.R;
 import com.ryanmord.livefrontproj.adapter.FeedRecyclerAdapter;
@@ -35,7 +36,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public interface IFeedFragmentCallback {
         void feedItemClicked(FeedItemViewHolder item);
-        boolean feedRefreshed();
+        boolean refreshFeed();
     }
 
 
@@ -48,6 +49,8 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     List<FeedItem> mData;
     FeedRecyclerAdapter mAdapter;
     IFeedFragmentCallback mCallback;
+
+    View mFragmentView;
 
 
     public static FeedFragment newInstance(IFeedFragmentCallback callback) {
@@ -62,15 +65,14 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
     }
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_feed, container, false);
-        ButterKnife.bind(this, v);
+        mFragmentView = inflater.inflate(R.layout.fragment_feed, container, false);
+        ButterKnife.bind(this, mFragmentView);
 
         RecyclerView.LayoutManager m = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mAdapter = new FeedRecyclerAdapter(getActivity());
@@ -83,7 +85,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         mSwipeRefresh.setOnRefreshListener(this);
 
-        return v;
+        return mFragmentView;
     }
 
 
@@ -94,11 +96,18 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         ActionBar t = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if(t != null) {
             t.setDisplayHomeAsUpEnabled(false);
-            t.setTitle("");
+            t.setDisplayShowTitleEnabled(false);
         }
     }
 
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(mCallback != null) {
+            mCallback.refreshFeed();
+        }
+    }
 
 
     public void setFeedData(List<FeedItem> items) {
@@ -111,31 +120,24 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         if(mAdapter != null) {
             mAdapter.setData(mData);
-            mAdapter.notifyDataSetChanged();
-
-            mFeedRecycler.getViewTreeObserver().addOnPreDrawListener(
-                    new ViewTreeObserver.OnPreDrawListener() {
-
-                        @Override
-                        public boolean onPreDraw() {
-                            mFeedRecycler.getViewTreeObserver().removeOnPreDrawListener(this);
-
-                            for (int i = 0; i < mFeedRecycler.getChildCount(); i++) {
-                                View v = mFeedRecycler.getChildAt(i);
-                                v.setAlpha(0.0f);
-                                v.animate().alpha(1.0f)
-                                        .setDuration(300)
-                                        .setStartDelay(i * 50)
-                                        .start();
-                            }
-
-                            return true;
-                        }
-                    });
         }
 
         mSwipeRefresh.setRefreshing(false);
     }
+
+
+
+
+
+    public void showErrorSnackbar() {
+        if(mFragmentView != null) {
+            Snackbar.make(mFragmentView, "Something went wrong! Check connectivity!", 3000).show();
+        } else {
+            Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
 
 
@@ -148,13 +150,15 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
 
 
+
+
     @Override
     public void onRefresh() {
         if(mCallback != null) {
-            boolean requestSuccess = mCallback.feedRefreshed();
+            boolean requestSuccess = mCallback.refreshFeed();
             if(!requestSuccess) {
                 mSwipeRefresh.setRefreshing(false);
-                Snackbar.make(getView(), "No Network Connection!", 2000).show();
+                showErrorSnackbar();
             }
         }
     }

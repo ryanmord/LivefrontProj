@@ -40,6 +40,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedItemViewHolder
         if(data != null) {
             mData.addAll(data);
         }
+
+        notifyDataSetChanged();
     }
 
     public void setItemClickListener(OnFeedItemClickListener listener) {
@@ -70,7 +72,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedItemViewHolder
             }
         });
     }
-
 
 
 

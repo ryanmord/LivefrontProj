@@ -22,4 +22,6 @@ public class FeedData {
     @SerializedName("articles")
     public List<FeedItem> articles;
 
+    public boolean error;
+
 }

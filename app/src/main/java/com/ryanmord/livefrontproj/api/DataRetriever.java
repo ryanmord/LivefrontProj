@@ -83,6 +83,10 @@ public class DataRetriever {
                     callback.onReceive(null);
                 }
             });
+        } else {
+            FeedData errorData = new FeedData();
+            errorData.error = true;
+            callback.onReceive(errorData);
         }
 
         return isConnected;

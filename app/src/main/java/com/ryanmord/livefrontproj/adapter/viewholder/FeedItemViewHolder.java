@@ -8,10 +8,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.ryanmord.livefrontproj.R;
 import com.ryanmord.livefrontproj.objects.FeedItem;
 import com.ryanmord.livefrontproj.widget.CircleImageView;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,9 +56,8 @@ public class FeedItemViewHolder extends RecyclerView.ViewHolder {
 
 
         if(!item.mImageUrl.isEmpty()) {
-            Glide.with(c)
+            Picasso.with(c)
                     .load(item.mImageUrl)
-                    .asBitmap()
                     .into(mImage);
         }
     }
