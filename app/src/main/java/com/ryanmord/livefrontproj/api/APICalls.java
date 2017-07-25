@@ -16,7 +16,7 @@ interface APICalls {
      *
      * @return  Call object to use in API call
      */
-    @GET("/v1/articles?source=cnn&sortBy=top&apiKey=52dabde93cc64788ac49951c32d25d68")
+    @GET(Endpoint.ENDPOINT_CNN)
     Call<FeedData> getFeedItems();
 
 }

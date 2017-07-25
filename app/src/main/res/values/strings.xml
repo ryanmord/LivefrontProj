@@ -1,17 +1,21 @@
 <resources>
+
     <string name="app_name">LivefrontProj</string>
+    <string name="by_space">"By "</string>
+    <string name="space_by_var">" by %s"</string>
+    <string name="something_went_wrong_check_connectivity">Something went wrong! Check connectivity!</string>
+    <string name="error">Error</string>
+    <string name="now">Now</string>
 
     <plurals name="minute_ago">
         <item quantity="one">%s minute ago</item>
         <item quantity="other">%s minutes ago</item>
     </plurals>
 
-
     <plurals name="hour_ago">
         <item quantity="one">%s hour ago</item>
         <item quantity="other">%s hours ago</item>
     </plurals>
-
 
     <plurals name="day_ago">
         <item quantity="one">%s day ago</item>

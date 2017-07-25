@@ -110,10 +110,12 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedItemViewHolder
      */
     @Override
     public void onBindViewHolder(final FeedItemViewHolder holder, int position) {
+        final String IMAGE_TRANS_NAME = "image";
+
         FeedItem currentItem = mData.get(position);
 
         holder.setFeedItem(mContext, currentItem);
-        ViewCompat.setTransitionName(holder.mImage, "image"+holder.getAdapterPosition());
+        ViewCompat.setTransitionName(holder.getImage(), IMAGE_TRANS_NAME + holder.getAdapterPosition());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

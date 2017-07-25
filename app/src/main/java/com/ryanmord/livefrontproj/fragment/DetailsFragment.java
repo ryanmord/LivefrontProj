@@ -165,18 +165,19 @@ public class DetailsFragment extends Fragment {
 
         //Build details string.
         StringBuilder s = new StringBuilder();
-        if(mItem.mPublishDate != null) {
-            s.append(String.format("%s", mItem.getDateString(getActivity())));
+        if(mItem.getPublishDate() != null) {
+            s.append(mItem.getDateString(getActivity()));
         }
 
-        if(mItem.mAuthor != null) {
-            s.append(String.format(TextUtils.isEmpty(s) ? "By " : " by %s", mItem.mAuthor));
+        if(mItem.getAuthor() != null) {
+            s.append(String.format(TextUtils.isEmpty(s) ? getString(R.string.by_space) :
+                    getString(R.string.space_by_var), mItem.getAuthor()));
         }
 
         //Populate TextViews
-        mTitle.setText(mItem.mTitle);
+        mTitle.setText(mItem.getTitle());
         mSubtext.setText(s.toString());
-        mSummary.setText(mItem.mDescription);
+        mSummary.setText(mItem.getDescription());
 
         //Set click listener to launch browser and navigate to full
         //article via provided URL
@@ -184,7 +185,7 @@ public class DetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                String url = mItem.mArticleUrl;
+                String url = mItem.getArticleUrl();
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 startActivity(i);
@@ -196,7 +197,7 @@ public class DetailsFragment extends Fragment {
         //Set shared transition name of header image.
         ViewCompat.setTransitionName(mHeaderImage, mHeaderTransitionName);
         Picasso.with(getActivity())
-                .load(mItem.mImageUrl)
+                .load(mItem.getImageUrl())
                 .into(mHeaderImage);
 
         return v;

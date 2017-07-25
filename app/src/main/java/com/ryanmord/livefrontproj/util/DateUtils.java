@@ -44,7 +44,7 @@ public class DateUtils {
             return String.format(s, p.getMinutes());
         } else {
             //Else return 'Now' since time was less than a minute
-            return "Now";
+            return c.getString(R.string.now);
         }
 
     }

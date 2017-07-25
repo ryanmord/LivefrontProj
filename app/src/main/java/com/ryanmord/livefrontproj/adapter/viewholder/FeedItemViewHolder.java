@@ -30,7 +30,7 @@ public class FeedItemViewHolder extends RecyclerView.ViewHolder {
      * ImageView for displaying article header-image
      */
     @BindView(R.id.item_image)
-    public ImageView mImage;
+    ImageView mImage;
 
     /**
      * TextView holding the title text
@@ -69,11 +69,11 @@ public class FeedItemViewHolder extends RecyclerView.ViewHolder {
         mItem = item;
 
         //Set title text
-        mTitle.setText(item.mTitle);
+        mTitle.setText(item.getTitle());
 
         //If item has publish date, set string and visibility.
         //Otherwise hide date text
-        if(item.mPublishDate != null) {
+        if(item.getPublishDate() != null) {
             mDate.setVisibility(View.VISIBLE);
             mDate.setText(item.getDateString(c));
         } else {
@@ -81,9 +81,10 @@ public class FeedItemViewHolder extends RecyclerView.ViewHolder {
         }
 
         //Load image into view
-        if(!item.mImageUrl.isEmpty()) {
+        String imgUrl = item.getImageUrl();
+        if(imgUrl != null && !imgUrl.isEmpty()) {
             Picasso.with(c)
-                    .load(item.mImageUrl)
+                    .load(imgUrl)
                     .into(mImage);
         }
     }
@@ -93,4 +94,7 @@ public class FeedItemViewHolder extends RecyclerView.ViewHolder {
         return mItem;
     }
 
+    public ImageView getImage() {
+        return mImage;
+    }
 }

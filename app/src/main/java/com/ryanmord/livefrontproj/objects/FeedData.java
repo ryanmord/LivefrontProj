@@ -10,28 +10,37 @@ import java.util.List;
 public class FeedData {
 
     /**
+     * Data keys used to parse data values from JSON response.
+     */
+    private final String  KEY_STATUS     = "status";
+    private final String  KEY_SOURCE     = "source";
+    private final String  KEY_SORT       = "sortBy";
+    private final String  KEY_ARTICLES   = "articles";
+
+
+    /**
      * Resulting status of call
      */
-    @SerializedName("status")
-    public String status;
+    @SerializedName(KEY_STATUS)
+    private String mStatus;
 
     /**
      * Source of data. ('CNN' in this case)
      */
-    @SerializedName("source")
-    public String source;
+    @SerializedName(KEY_SOURCE)
+    private String mSource;
 
     /**
      * Order by which the data is sorted.
      */
-    @SerializedName("sortBy")
-    public String sort;
+    @SerializedName(KEY_SORT)
+    private String mSort;
 
     /**
      * Structure of articles returned from the source
      */
-    @SerializedName("articles")
-    public List<FeedItem> articles;
+    @SerializedName(KEY_ARTICLES)
+    private List<FeedItem> mArticles;
 
     /**
      * Indicates whether an error occurred while trying
@@ -41,4 +50,11 @@ public class FeedData {
      */
     public boolean error;
 
+
+    /**
+     * @return  Structure of article data
+     */
+    public List<FeedItem> getArticles() {
+        return mArticles;
+    }
 }
