@@ -14,8 +14,6 @@ import com.ryanmord.livefrontproj.objects.FeedItem;
 import java.util.ArrayList;
 import java.util.List;
 
-import timber.log.Timber;
-
 /**
  * Adapter to be used on the RecyclerView on the FeedFragment
  */

@@ -14,15 +14,12 @@ import org.joda.time.DateTime;
 
 import java.net.UnknownHostException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import timber.log.Timber;
 
 /**
  * Class used for API calls, data retrieval, and Json parsing.

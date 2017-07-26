@@ -15,7 +15,6 @@ import com.ryanmord.livefrontproj.api.DataRetriever;
 import com.ryanmord.livefrontproj.api.DataRetriever.OnFeedDataRetrieved;
 import com.ryanmord.livefrontproj.fragment.DetailsFragment;
 import com.ryanmord.livefrontproj.fragment.FeedFragment;
-import com.ryanmord.livefrontproj.objects.FeedData;
 import com.ryanmord.livefrontproj.objects.FeedItem;
 
 import java.util.List;

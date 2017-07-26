@@ -8,7 +8,5 @@
     <color name="textColorPrimaryDark">@android:color/black</color>
 
     <color name="divider_gray">#E0E0E0</color>
-    <color name="text_gray">#D9444D4F</color>
-    <color name="item_placeholder_gray">#D9444D4F</color>
 
 </resources>

@@ -6,9 +6,6 @@ import com.google.gson.annotations.SerializedName;
 import com.ryanmord.livefrontproj.util.DateUtils;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Class used to hold data pertaining to a single feed item.

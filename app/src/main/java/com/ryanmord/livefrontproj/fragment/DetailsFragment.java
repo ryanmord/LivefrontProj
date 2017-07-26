@@ -194,7 +194,7 @@ public class DetailsFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        //If exiting is being performed, dont initialize animations
+        //If exiting is being performed, don't initialize animations
         if(item.getItemId() == android.R.id.home) {
             Timber.d("Menu back arrow clicked.");
             if (!mIsExiting) {
@@ -294,7 +294,7 @@ public class DetailsFragment extends Fragment {
     /**
      * Perform animation to show the floating action button
      */
-    public void animateFabIn() {
+    private void animateFabIn() {
         Animation a = AnimationUtils.loadAnimation(getActivity(), R.anim.roll_in_right);
         mActionButton.startAnimation(a);
         mActionButton.setVisibility(View.VISIBLE);
