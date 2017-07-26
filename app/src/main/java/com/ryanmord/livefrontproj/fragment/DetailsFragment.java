@@ -187,7 +187,8 @@ public class DetailsFragment extends Fragment {
 
                 String url = mItem.getArticleUrl();
                 Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
+                i.setData(Uri.parse("https://www.google.com"));
+                i.addCategory(Intent.CATEGORY_BROWSABLE);
                 startActivity(i);
 
             }

@@ -198,6 +198,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      * is available, a Toast will be used.
      */
     public void showErrorSnackbar() {
+        mSwipeRefresh.setRefreshing(false);
         if(mFragmentView != null) {
             Snackbar.make(mFragmentView, R.string.something_went_wrong_check_connectivity, 3000).show();
         } else {

@@ -13,7 +13,7 @@ class Endpoint {
     /**
      * Base API URL
      */
-    static final String ENDPOINT_BASE = "https://newsapi.org";
+    public static final String ENDPOINT_BASE = "https://newsapi.org";
 
     /**
      * Endpoint for CNN API requests.
