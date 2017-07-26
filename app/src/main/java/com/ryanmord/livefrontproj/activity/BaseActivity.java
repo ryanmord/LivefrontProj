@@ -26,7 +26,7 @@ import timber.log.Timber;
 
 
 /**
- * Base activity that manages fragments and data retrieval.
+ * Base activity that manages fragments and data transfer.
  */
 public class BaseActivity extends AppCompatActivity implements FeedFragment.IFeedFragmentCallback, OnFeedDataRetrieved {
 
@@ -37,7 +37,7 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
     Toolbar mToolbar;
 
     /**
-     * Bar layout used to expand/collapse toolbar on recyclerview
+     * Bar layout used to expand/collapse toolbar on RecyclerView
      * scroll in FeedFragment.
      */
     @BindView(R.id.bar_layout)

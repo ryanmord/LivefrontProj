@@ -6,13 +6,13 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 
 /**
- * Interface used in conjuntion with Retrofit to supply endpoints
+ * Interface used in conjunction with Retrofit to supply endpoints
  * for API calls
  */
 interface APICalls {
 
     /**
-     * Endoint for CNN API interaction
+     * Endpoint for CNN API interaction.
      *
      * @return  Call object to use in API call
      */

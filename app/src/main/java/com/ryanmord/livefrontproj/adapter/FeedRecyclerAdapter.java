@@ -132,6 +132,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedItemViewHolder
 
     /**
      * {@inheritDoc}
+     *
      * @return  Number of items in the adapter
      */
     @Override

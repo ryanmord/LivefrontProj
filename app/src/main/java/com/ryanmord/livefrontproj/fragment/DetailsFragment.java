@@ -77,7 +77,7 @@ public class DetailsFragment extends Fragment {
      * dynamically since each item in the FeedRecycler has
      * a different transition name.
      */
-    private String mHeaderTransitionName = "";
+    private String mHeaderTransitionName;
 
     /**
      * Boolean indicating if exit animations are currently
@@ -92,8 +92,9 @@ public class DetailsFragment extends Fragment {
      *
      * @param item  FeedItem object containing the data to be displayed
      * @param imageTransitionName   Transition name of the incoming image being shared
-     *                              from FeedFragment
-     * @return
+     *                              from FeedFragment.
+     *
+     * @return  Newly instantiated DetailsFragment.
      */
     public static DetailsFragment newInstance(FeedItem item, String imageTransitionName) {
         DetailsFragment frag = new DetailsFragment();

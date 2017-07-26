@@ -1,7 +1,6 @@
 package com.ryanmord.livefrontproj;
 
 import android.support.test.runner.AndroidJUnit4;
-import android.test.AndroidTestCase;
 
 import com.ryanmord.livefrontproj.util.DateUtils;
 
@@ -9,9 +8,8 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.support.test.InstrumentationRegistry.getContext;
 import static android.support.test.InstrumentationRegistry.getTargetContext;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for the DateUtils class

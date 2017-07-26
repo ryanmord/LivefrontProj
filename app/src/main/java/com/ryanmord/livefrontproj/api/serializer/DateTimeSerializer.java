@@ -34,12 +34,12 @@ public class DateTimeSerializer implements JsonSerializer<DateTime>, JsonDeseria
     /**
      * Format of date items in JSON responses
      */
-    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    private final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     /**
      * DateTimeFormatter used to convert Date objects to JsonElements
      */
-    private static final DateTimeFormatter UTC_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT).withZone(DateTimeZone.UTC);
+    private final DateTimeFormatter UTC_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT).withZone(DateTimeZone.UTC);
 
 
     /**

@@ -16,7 +16,7 @@ class Endpoint {
     static final String ENDPOINT_BASE = "https://newsapi.org";
 
     /**
-     * Endpoint for CNN API requests.
+     * Endpoint for CNN API requests. Sorted by TOP articles.
      */
     static final String ENDPOINT_CNN = "/v1/articles?source=cnn&sortBy=top&apiKey=" + TOKEN;
 

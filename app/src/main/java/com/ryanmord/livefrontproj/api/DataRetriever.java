@@ -51,6 +51,10 @@ public class DataRetriever {
         void onReceive(Exception exception, List<FeedItem> data);
     }
 
+
+    /**
+     * Application context
+     */
     private Context mContext;
 
 
@@ -114,6 +118,11 @@ public class DataRetriever {
     }
 
 
+    /**
+     * Gets current network connectivity status
+     *
+     * @return  True if connected. False otherwise
+     */
     private boolean isConnected() {
         ConnectivityManager cm = (ConnectivityManager)  mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
 

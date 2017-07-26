@@ -10,6 +10,10 @@ import timber.log.Timber;
  */
 public class LivefrontProjApplication extends Application {
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCreate() {
         super.onCreate();

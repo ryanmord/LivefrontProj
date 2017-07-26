@@ -14,14 +14,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Viewholder class used by FeedRecyclerAdapter for individual feed items
+ * ViewHolder class used by FeedRecyclerAdapter for individual feed items
  */
 
 public class FeedItemViewHolder extends RecyclerView.ViewHolder {
 
     /**
-     * FeedItem object containing item data
-     * to be displayed
+     * FeedItem object containing item data to be displayed
      */
     private FeedItem mItem;
 
@@ -52,7 +51,6 @@ public class FeedItemViewHolder extends RecyclerView.ViewHolder {
      */
     public FeedItemViewHolder(View itemView) {
         super(itemView);
-
         ButterKnife.bind(this, itemView);
     }
 
@@ -91,7 +89,7 @@ public class FeedItemViewHolder extends RecyclerView.ViewHolder {
 
 
     /**
-     * @return  Feed item being presented
+     * @return  The feed item being presented
      */
     public FeedItem getFeedItem() {
         return mItem;
