@@ -16,8 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="225dp"
             android:scaleType="centerCrop"
-            android:background="@color/divider_gray"
-            android:transitionName="item_image"/>
+            android:background="@color/divider_gray"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -57,19 +56,13 @@
 
         </RelativeLayout>
 
-
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/details_fab"
+            style="@style/DetailsFloatingActionButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/details_header_image"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="-32dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:clickable="true"
-            android:visibility="gone"
             app:srcCompat="@drawable/ic_compass_outline_white_48dp" />
+
     </RelativeLayout>
 </ScrollView>

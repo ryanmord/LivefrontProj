@@ -12,13 +12,17 @@ import com.ryanmord.livefrontproj.objects.FeedItem;
 
 import org.joda.time.DateTime;
 
+import java.net.UnknownHostException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import timber.log.Timber;
 
 /**
  * Class used for API calls, data retrieval, and Json parsing.
@@ -33,20 +37,31 @@ public class DataRetriever {
         /**
          * Called when an API call finishes.
          *
-         * @param data  FeedData object with data set according
-         *              to success, failure, or error.
-         *
-         *              ON SUCCESS data will present and 'articles' variable will contain
-         *              structure of items.
-         *
-         *              ON FAILURE, FeedData item will be null.
-         *
-         *              ON ERROR, 'error' field in FeedData item will be set to true. Errors limited
-         *              to network connectivity problems at this time
+         * @param data FeedData object with data set according
+         *             to success, failure, or error.
+         *             <p>
+         *             ON SUCCESS data will present and 'articles' variable will contain
+         *             structure of items.
+         *             <p>
+         *             ON FAILURE, FeedData item will be null.
+         *             <p>
+         *             ON ERROR, 'error' field in FeedData item will be set to true. Errors limited
+         *             to network connectivity problems at this time
          */
-        void onReceive(boolean error, List<FeedItem> data);
+        void onReceive(Exception exception, List<FeedItem> data);
     }
 
+    private Context mContext;
+
+
+    /**
+     * Instantiate new DataRetriever
+     *
+     * @param context   Application Context
+     */
+    public DataRetriever(Context context) {
+        mContext = context;
+    }
 
     /**
      * Gson instance used with Retrofit to parse JSON responses into
@@ -57,6 +72,7 @@ public class DataRetriever {
             .registerTypeAdapter(DateTime.class, new DateTimeSerializer())
             .create();
 
+
     /**
      * Retrofit instance to perform network calls and handle
      * responses
@@ -66,53 +82,42 @@ public class DataRetriever {
             .addConverterFactory(GsonConverterFactory.create(mGson))
             .build();
 
-    /**
-     * Application context.
-     */
-    private Context mContext;
-
-
-    /**
-     * Instantiate new DataRetriever
-     *
-     * @param context   Application context
-     */
-    public DataRetriever(Context context) {
-        mContext = context;
-    }
 
 
     /**
      * Method to perform API call for new feed data.
      *
-     * @param callback  Callback to notify when call completes.
+     * @param callback Callback to notify when call completes.
      */
     public void fetchFeed(final OnFeedDataRetrieved callback) {
-        //Get connectivity status
-        ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        if(!isConnected()) {
+            callback.onReceive(new UnknownHostException(), null);
+        } else {
 
-        if(isConnected) {
             APICalls calls = mRetrofit.create(APICalls.class);
             Call<FeedData> call = calls.getFeedItems();
             call.enqueue(new Callback<FeedData>() {
 
                 @Override
                 public void onResponse(Call<FeedData> call, Response<FeedData> response) {
-                    callback.onReceive(false, response.body().getArticles());
+                    callback.onReceive(null, response.body().getArticles());
 
                 }
 
                 @Override
                 public void onFailure(Call<FeedData> call, Throwable t) {
-                    callback.onReceive(true, null);
+                    callback.onReceive(new Exception(t), null);
                 }
             });
-        } else {
-            callback.onReceive(true, null);
-        }
 
+        }
     }
 
+
+    private boolean isConnected() {
+        ConnectivityManager cm = (ConnectivityManager)  mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
 }

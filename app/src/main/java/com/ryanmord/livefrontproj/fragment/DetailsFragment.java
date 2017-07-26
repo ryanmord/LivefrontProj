@@ -29,6 +29,7 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * Fragment for displaying more detailed information for a specific article.
@@ -103,39 +104,7 @@ public class DetailsFragment extends Fragment {
     }
 
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param item  MenuItem that was clicked
-     *
-     * @return  True if this class handled to selection,
-     *          false otherwise.
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
 
-        //If exiting is being performed, dont initialize animations
-        if(!mIsExiting) {
-            mIsExiting = true;
-            animateFabOut(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    mIsExiting = false;
-                    getFragmentManager().popBackStack();
-                }
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-        }
-
-        return true;
-    }
 
     /**
      * {@inheritDoc}
@@ -162,6 +131,7 @@ public class DetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_details, container, false);
         ButterKnife.bind(this, v);
+        Timber.d("View inflated and bound. Continuing setup...");
 
         //Build details string.
         StringBuilder s = new StringBuilder();
@@ -187,12 +157,19 @@ public class DetailsFragment extends Fragment {
 
                 String url = mItem.getArticleUrl();
                 Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse("https://www.google.com"));
+                i.setData(Uri.parse(url));
                 i.addCategory(Intent.CATEGORY_BROWSABLE);
                 startActivity(i);
 
             }
         });
+
+
+        //FAB animation initiated in transition listener will not be fired
+        //on devices lower than Lollipop, so animate immediately.
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            animateFabIn();
+        }
 
 
         //Set shared transition name of header image.
@@ -208,17 +185,65 @@ public class DetailsFragment extends Fragment {
     /**
      * {@inheritDoc}
      *
+     * @param item  MenuItem that was clicked
+     *
+     * @return  True if this class handled to selection,
+     *          false otherwise.
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        //If exiting is being performed, dont initialize animations
+        if(item.getItemId() == android.R.id.home) {
+            Timber.d("Menu back arrow clicked.");
+            if (!mIsExiting) {
+                Timber.d("Animating FAB off screen...");
+                mIsExiting = true;
+                animateFabOut(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        mIsExiting = false;
+                        getFragmentManager().popBackStack();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+            }
+
+            return true;
+
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+
+    /**
+     * {@inheritDoc}
+     *
      * @param menu  Menu to populate
      * @param inflater  Inflater to inflate menu resources
      */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        Timber.d("Configuring toolbar");
 
         ActionBar t = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if(t != null) {
             t.setDisplayHomeAsUpEnabled(true);
             t.setDisplayShowTitleEnabled(false);
+        } else {
+            Timber.e("TOOLBAR NULL");
         }
     }
 
@@ -234,7 +259,8 @@ public class DetailsFragment extends Fragment {
     @Override
     public void setSharedElementEnterTransition(Transition transition) {
         super.setSharedElementEnterTransition(transition);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Timber.d("Shared element enter transition received. Adding listener.");
             transition.addListener(new Transition.TransitionListener() {
                 @Override
                 public void onTransitionStart(Transition transition) {

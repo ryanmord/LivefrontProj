@@ -24,29 +24,31 @@ public class DateUtils {
      * @return  String representing the time since the date given.
      */
     public static String durationSinceDate(Context c, DateTime date) {
+        if(c != null) {
+            Period p = new Period(date, new DateTime());
 
-        Period p = new Period(date, new DateTime());
+            if (p.getDays() > 0) {
+                //return if more than a day has passed
+                String s = c.getResources().getQuantityString(R.plurals.day_ago, p.getDays());
 
-        if(p.getDays() > 0) {
-            //return if more than a day has passed
-            String s = c.getResources().getQuantityString(R.plurals.day_ago, p.getDays());
+                return String.format(s, p.getDays());
+            } else if (p.getHours() > 0) {
+                //return if more than an hour has passed
+                String s = c.getResources().getQuantityString(R.plurals.hour_ago, p.getHours());
 
-            return String.format(s, p.getDays());
-        } else if(p.getHours() > 0) {
-            //return if more than an hour has passed
-            String s = c.getResources().getQuantityString(R.plurals.hour_ago, p.getHours());
+                return String.format(s, p.getHours());
+            } else if (p.getMinutes() > 0) {
+                //return if more than a minute has passed
+                String s = c.getResources().getQuantityString(R.plurals.minute_ago, p.getMinutes());
 
-            return String.format(s, p.getHours());
-        } else if(p.getMinutes() > 0) {
-            //return if more than a minute has passed
-            String s = c.getResources().getQuantityString(R.plurals.minute_ago, p.getMinutes());
-
-            return String.format(s, p.getMinutes());
-        } else {
-            //Else return 'Now' since time was less than a minute
-            return c.getString(R.string.now);
+                return String.format(s, p.getMinutes());
+            } else {
+                //Else return 'Now' since time was less than a minute
+                return c.getString(R.string.now);
+            }
         }
 
+        return "";
     }
 
 }

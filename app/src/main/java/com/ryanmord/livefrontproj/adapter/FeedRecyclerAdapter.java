@@ -14,6 +14,8 @@ import com.ryanmord.livefrontproj.objects.FeedItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * Adapter to be used on the RecyclerView on the FeedFragment
  */
@@ -109,7 +111,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedItemViewHolder
      * @param position  Position of holder in adapter
      */
     @Override
-    public void onBindViewHolder(final FeedItemViewHolder holder, int position) {
+    public void onBindViewHolder(final FeedItemViewHolder holder, final int position) {
         final String IMAGE_TRANS_NAME = "image";
 
         FeedItem currentItem = mData.get(position);

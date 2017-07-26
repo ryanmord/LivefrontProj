@@ -90,10 +90,17 @@ public class FeedItemViewHolder extends RecyclerView.ViewHolder {
     }
 
 
+    /**
+     * @return  Feed item being presented
+     */
     public FeedItem getFeedItem() {
         return mItem;
     }
 
+
+    /**
+     * @return Article ImageView.
+     */
     public ImageView getImage() {
         return mImage;
     }

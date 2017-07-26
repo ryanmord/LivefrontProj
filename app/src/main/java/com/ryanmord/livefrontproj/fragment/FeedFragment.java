@@ -26,6 +26,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * Fragment used to maintain the main feed of data
@@ -44,6 +45,10 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
          * @param item  Item ViewHolder that was clicked.
          */
         void feedItemClicked(FeedItemViewHolder item);
+
+        /**
+         * Called to request a data refresh.
+         */
         void refreshFeed();
     }
 
@@ -122,6 +127,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         mFragmentView = inflater.inflate(R.layout.fragment_feed, container, false);
         ButterKnife.bind(this, mFragmentView);
+        Timber.d("View inflated and bound. Continuing setup...");
 
         RecyclerView.LayoutManager m = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mAdapter = new FeedRecyclerAdapter(getActivity());
@@ -147,11 +153,14 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        Timber.d("Configuring toolbar");
 
         ActionBar t = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if(t != null) {
             t.setDisplayHomeAsUpEnabled(false);
             t.setDisplayShowTitleEnabled(false);
+        } else {
+            Timber.e("TOOLBAR NULL");
         }
     }
 
@@ -163,6 +172,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onStart() {
         super.onStart();
         if(mCallback != null) {
+            Timber.d("FeedFragment started. Refreshing feed");
             mSwipeRefresh.setRefreshing(true);
             mCallback.refreshFeed();
         }
@@ -176,6 +186,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      * @param items Structure of data to be shown
      */
     public void setFeedData(List<FeedItem> items) {
+        Timber.d("Fragment handling new data.");
         if(mData == null) {
             mData = new ArrayList<>();
         }
@@ -200,8 +211,10 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void showErrorSnackbar() {
         mSwipeRefresh.setRefreshing(false);
         if(mFragmentView != null) {
+            Timber.d("Displaying error snackbar");
             Snackbar.make(mFragmentView, R.string.something_went_wrong_check_connectivity, 3000).show();
         } else {
+            Timber.e("Fragment view null... Showing error with Toast");
             Toast.makeText(getActivity(), R.string.error, Toast.LENGTH_SHORT).show();
         }
     }
@@ -215,7 +228,10 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void feedItemClicked(FeedItemViewHolder item) {
         if(mCallback != null) {
+            Timber.d("Item click received in fragment. Passing to callback");
             mCallback.feedItemClicked(item);
+        } else {
+            Timber.d("Item click received in fragment but callback was null");
         }
     }
 
@@ -226,7 +242,10 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onRefresh() {
         if(mCallback != null) {
+            Timber.d("Feed refresh received. Passing to callback");
             mCallback.refreshFeed();
+        } else {
+            Timber.d("Feed refresh received but callback was null");
         }
     }
 

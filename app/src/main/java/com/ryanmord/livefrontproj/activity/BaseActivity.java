@@ -22,6 +22,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 
 /**
@@ -61,12 +62,14 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+        Timber.d("BaseActivity launched and content view set");
 
         ButterKnife.bind(this); //Bind views to class
         setSupportActionBar(mToolbar);
 
         mDataRetriever = new DataRetriever(this);
 
+        Timber.d("Views bound, toolbar set. Instantiating and launching FeedFragment");
         //Inflate and commit feed fragment
         mFeedFragment = FeedFragment.newInstance(BaseActivity.this);
         android.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -76,19 +79,20 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
 
 
 
-
     /**
      *  {@inheritDoc}
      */
     @Override
     public void feedItemClicked(FeedItemViewHolder item) {
         //Create new DetailsFragment and pass transition name of the image being shared
+        Timber.d("Clicked feed item received. Instantiating DetailsFragment...");
         DetailsFragment d = DetailsFragment.newInstance(item.getFeedItem(), ViewCompat.getTransitionName(item.getImage()));
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         //Check for required Android version for shared element transition.
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            Timber.d("Acceptable SDK version for shared element transition. Configuring shared elements...");
             //Configure transitions for entering/exiting transaction
             Transition moveTransform = TransitionInflater.from(this).inflateTransition(android.R.transition.move);
             Transition fadeTransform = TransitionInflater.from(this).inflateTransition(android.R.transition.fade);
@@ -106,6 +110,7 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
             transaction.addSharedElement(item.getImage(), ViewCompat.getTransitionName(item.getImage()));
         }
 
+        Timber.d("Performing DetailsFragment transaction...");
         //Commit transaction and expand bar layout
         transaction.replace(R.id.base_fragment_holder, d)
                 .addToBackStack(null)
@@ -115,37 +120,34 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
     }
 
 
-
-
-
     /**
      *  {@inheritDoc}
      */
     @Override
     public void refreshFeed() {
-        mDataRetriever.fetchFeed(this);
+        Timber.d("Performing feed refresh on request.");
+        if(mDataRetriever != null) {
+            mDataRetriever.fetchFeed(this);
+        }
     }
-
-
-
-
-
 
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public void onReceive(boolean error, List<FeedItem> data) {
+    public void onReceive(Exception exception, List<FeedItem> data) {
+        Timber.d("Feed refresh response received");
 
         //If data retrieval was unsuccessful
-        if(error || data == null) {
+        if(exception != null || data == null) {
+            Timber.e("FEED REFRESH ERROR :: " + exception);
             mFeedFragment.showErrorSnackbar();
         } else {
+            Timber.d("Feed refresh successful. Passing to fragment.");
             //Otherwise set feed data
             mFeedFragment.setFeedData(data);
         }
-
     }
 
 
