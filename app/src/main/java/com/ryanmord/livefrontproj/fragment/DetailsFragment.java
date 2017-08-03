@@ -87,6 +87,16 @@ public class DetailsFragment extends Fragment {
     private boolean mIsExiting = false;
 
 
+
+
+
+    public static final String TAG = "details";
+
+
+
+
+
+
     /**
      * Create new details fragment for the given FeedItem.
      *
@@ -98,6 +108,7 @@ public class DetailsFragment extends Fragment {
      */
     public static DetailsFragment newInstance(FeedItem item, String imageTransitionName) {
         DetailsFragment frag = new DetailsFragment();
+        frag.setRetainInstance(true);
         frag.mItem = item;
         frag.mHeaderTransitionName = imageTransitionName;
 
@@ -115,8 +126,17 @@ public class DetailsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        if(savedInstanceState != null) {
+            mItem = savedInstanceState.getParcelable(FeedItem.TAG);
+        }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(FeedItem.TAG, mItem);
+    }
 
     /**
      * {@inheritDoc}

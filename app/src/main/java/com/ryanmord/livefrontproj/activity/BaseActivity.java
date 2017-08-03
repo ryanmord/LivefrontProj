@@ -47,6 +47,7 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
      * and reuse.
      */
     private FeedFragment mFeedFragment;
+    private DetailsFragment mDetailsFragment;
 
     /**
      * Data retriever for API interaction and data retrieval.
@@ -65,17 +66,40 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
 
         ButterKnife.bind(this); //Bind views to class
         setSupportActionBar(mToolbar);
-
         mDataRetriever = new DataRetriever(this);
 
         Timber.d("Views bound, toolbar set. Instantiating and launching FeedFragment");
-        //Inflate and commit feed fragment
-        mFeedFragment = FeedFragment.newInstance(BaseActivity.this);
-        android.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(R.id.base_fragment_holder, mFeedFragment)
-                .commit();
+
+        if(savedInstanceState != null) {
+            mFeedFragment = (FeedFragment) getFragmentManager().getFragment(savedInstanceState, FeedFragment.TAG);
+            if(mFeedFragment != null) {
+                mFeedFragment.setCallback(this);
+            }
+
+            mDetailsFragment = (DetailsFragment) getFragmentManager().getFragment(savedInstanceState, DetailsFragment.TAG);
+        } else {
+            //Inflate and commit feed fragment
+            mFeedFragment = FeedFragment.newInstance();
+            mFeedFragment.setCallback(this);
+            android.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.add(R.id.base_fragment_holder, mFeedFragment)
+                    .commit();
+        }
+
     }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(mFeedFragment != null && mFeedFragment.isAdded()) {
+            getFragmentManager().putFragment(outState, FeedFragment.TAG, mFeedFragment);
+        }
+
+        if(mDetailsFragment != null && mDetailsFragment.isAdded()) {
+            getFragmentManager().putFragment(outState, DetailsFragment.TAG, mDetailsFragment);
+        }
+    }
 
 
     /**
@@ -85,7 +109,7 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
     public void feedItemClicked(FeedItemViewHolder item) {
         //Create new DetailsFragment and pass transition name of the image being shared
         Timber.d("Clicked feed item received. Instantiating DetailsFragment...");
-        DetailsFragment d = DetailsFragment.newInstance(item.getFeedItem(), ViewCompat.getTransitionName(item.getImage()));
+        mDetailsFragment = DetailsFragment.newInstance(item.getFeedItem(), ViewCompat.getTransitionName(item.getImage()));
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
@@ -99,11 +123,11 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
             mFeedFragment.setSharedElementReturnTransition(moveTransform);
             mFeedFragment.setExitTransition(fadeTransform);
 
-            d.setSharedElementEnterTransition(moveTransform);
-            d.setEnterTransition(fadeTransform);
+            mDetailsFragment.setSharedElementEnterTransition(moveTransform);
+            mDetailsFragment.setEnterTransition(fadeTransform);
 
-            d.setSharedElementEnterTransition(moveTransform);
-            d.setEnterTransition(new android.transition.Fade(android.transition.Fade.IN));
+            mDetailsFragment.setSharedElementEnterTransition(moveTransform);
+            mDetailsFragment.setEnterTransition(new android.transition.Fade(android.transition.Fade.IN));
 
             //Set element to be shared between fragments
             transaction.addSharedElement(item.getImage(), ViewCompat.getTransitionName(item.getImage()));
@@ -111,7 +135,7 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
 
         Timber.d("Performing DetailsFragment transaction...");
         //Commit transaction and expand bar layout
-        transaction.replace(R.id.base_fragment_holder, d)
+        transaction.replace(R.id.base_fragment_holder, mDetailsFragment)
                 .addToBackStack(null)
                 .commit();
 

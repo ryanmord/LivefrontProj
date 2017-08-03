@@ -2,6 +2,7 @@ package com.ryanmord.livefrontproj.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -53,6 +54,8 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
 
+    public static final String TAG = "feed";
+
     /**
      * RecyclerView used to display article data
      */
@@ -70,7 +73,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      * Structure containing data currently being
      * represented in the RecyclerView
      */
-    private List<FeedItem> mData;
+    private List<FeedItem> mData = new ArrayList<>();
 
     /**
      * Adapter attached to recycler view
@@ -91,13 +94,11 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     /**
      * Create new FeedFragment instance with given callback
      *
-     * @param callback  Callback implementation to notify of events.
      * @return  Newly instantiated FeedFragment instance for use.
      */
-    public static FeedFragment newInstance(IFeedFragmentCallback callback) {
+    public static FeedFragment newInstance() {
         FeedFragment frag = new FeedFragment();
-        frag.mCallback = callback;
-
+        frag.setRetainInstance(true);
         return frag;
     }
 
@@ -110,8 +111,27 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        if(savedInstanceState != null) {
+            List<FeedItem> savedItems = savedInstanceState.getParcelableArrayList("hey");
+            if(savedItems != null) {
+                mData.clear();
+                mData.addAll(savedItems);
+            }
+        }
     }
 
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("hey", (ArrayList<? extends Parcelable>) mData);
+
+    }
 
     /**
      * {@inheritDoc}
@@ -171,11 +191,15 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onStart() {
         super.onStart();
-        if(mCallback != null) {
+        if(mData.size() == 0 && mCallback != null) {
             Timber.d("FeedFragment started. Refreshing feed");
             mSwipeRefresh.setRefreshing(true);
             mCallback.refreshFeed();
         }
+    }
+
+    public void setCallback(IFeedFragmentCallback callback) {
+        mCallback = callback;
     }
 
 
@@ -246,6 +270,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             mCallback.refreshFeed();
         } else {
             Timber.d("Feed refresh received but callback was null");
+            mSwipeRefresh.setRefreshing(false);
         }
     }
 
