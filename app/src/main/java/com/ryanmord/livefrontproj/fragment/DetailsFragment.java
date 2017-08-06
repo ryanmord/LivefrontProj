@@ -86,10 +86,9 @@ public class DetailsFragment extends Fragment {
      */
     private boolean mIsExiting = false;
 
-
-
-
-
+    /**
+     * Tag for maintaining fragment through state changes
+     */
     public static final String TAG = "details";
 
 
@@ -117,7 +116,6 @@ public class DetailsFragment extends Fragment {
 
 
 
-
     /**
      * {@inheritDoc}
      * @param savedInstanceState Bundle containing saved instance data
@@ -132,6 +130,11 @@ public class DetailsFragment extends Fragment {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param outState bundle to store data on state changes
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -161,14 +164,19 @@ public class DetailsFragment extends Fragment {
         }
 
         if(mItem.getAuthor() != null) {
-            s.append(String.format(TextUtils.isEmpty(s) ? getString(R.string.by_space) :
-                    getString(R.string.space_by_var), mItem.getAuthor()));
+            s.append(String.format(TextUtils.isEmpty(s) ? getString(R.string.by_space) :  getString(R.string.space_by_var), mItem.getAuthor()));
         }
 
         //Populate TextViews
         mTitle.setText(mItem.getTitle());
-        mSubtext.setText(s.toString());
         mSummary.setText(mItem.getDescription());
+
+        if(TextUtils.isEmpty(s.toString())) {
+            mSubtext.setVisibility(View.GONE);
+        } else {
+            mSubtext.setVisibility(View.VISIBLE);
+            mSubtext.setText(s.toString());
+        }
 
         //Set click listener to launch browser and navigate to full
         //article via provided URL
@@ -188,10 +196,13 @@ public class DetailsFragment extends Fragment {
 
         //FAB animation initiated in transition listener will not be fired
         //on devices lower than Lollipop, so animate immediately.
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            animateFabIn();
+        if(savedInstanceState != null) {
+            mActionButton.setVisibility(View.VISIBLE);
+        } else {
+            if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+                animateFabIn();
+            }
         }
-
 
         //Set shared transition name of header image.
         ViewCompat.setTransitionName(mHeaderImage, mHeaderTransitionName);

@@ -2,6 +2,7 @@ package com.ryanmord.livefrontproj.activity;
 
 import android.app.FragmentTransaction;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -43,7 +44,7 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
     AppBarLayout mBarLayout;
 
     /**
-     * Reference to instantiated feed fragment for interaction
+     * Reference to instantiated fragments for interaction
      * and reuse.
      */
     private FeedFragment mFeedFragment;
@@ -73,7 +74,7 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
         if(savedInstanceState != null) {
             mFeedFragment = (FeedFragment) getFragmentManager().getFragment(savedInstanceState, FeedFragment.TAG);
             if(mFeedFragment != null) {
-                mFeedFragment.setCallback(this);
+                mFeedFragment.setCallback(this); //must be re-set since old activity callback was destroyed
             }
 
             mDetailsFragment = (DetailsFragment) getFragmentManager().getFragment(savedInstanceState, DetailsFragment.TAG);
@@ -89,10 +90,14 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
     }
 
 
+    /**
+     * {@inheritDoc}
+     * @param outState  Bundle for storing data through state changes
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(mFeedFragment != null && mFeedFragment.isAdded()) {
+        if(mFeedFragment != null) {
             getFragmentManager().putFragment(outState, FeedFragment.TAG, mFeedFragment);
         }
 
@@ -110,6 +115,7 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
         //Create new DetailsFragment and pass transition name of the image being shared
         Timber.d("Clicked feed item received. Instantiating DetailsFragment...");
         mDetailsFragment = DetailsFragment.newInstance(item.getFeedItem(), ViewCompat.getTransitionName(item.getImage()));
+
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
@@ -139,7 +145,9 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
                 .addToBackStack(null)
                 .commit();
 
+
         mBarLayout.setExpanded(true, true);
+
     }
 
 
