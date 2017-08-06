@@ -37,14 +37,16 @@
                     android:id="@+id/details_title"
                     style="@style/DetailsTitleStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:freezesText="true"/>
 
                 <TextView
                     android:id="@+id/details_subtext"
                     style="@style/DetailsSubtitleStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/details_title" />
+                    android:layout_below="@+id/details_title"
+                    android:freezesText="true"/>
 
                 <TextView
                     android:id="@+id/details_summary"
@@ -53,7 +55,8 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/details_subtext"
                     android:layout_marginTop="16dp"
-                    android:paddingBottom="@dimen/standard_fab_diameter"/>
+                    android:paddingBottom="@dimen/standard_fab_diameter"
+                    android:freezesText="true"/>
 
             </RelativeLayout>
         </android.support.v4.widget.NestedScrollView>

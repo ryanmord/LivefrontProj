@@ -29,6 +29,7 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import timber.log.Timber;
 
 /**
@@ -157,52 +158,38 @@ public class DetailsFragment extends Fragment {
         ButterKnife.bind(this, v);
         Timber.d("View inflated and bound. Continuing setup...");
 
-        //Build details string.
-        StringBuilder s = new StringBuilder();
-        if(mItem.getPublishDate() != null) {
-            s.append(mItem.getDateString(getActivity()));
-        }
+        if(savedInstanceState == null) {
 
-        if(mItem.getAuthor() != null) {
-            s.append(String.format(TextUtils.isEmpty(s) ? getString(R.string.by_space) :  getString(R.string.space_by_var), mItem.getAuthor()));
-        }
-
-        //Populate TextViews
-        mTitle.setText(mItem.getTitle());
-        mSummary.setText(mItem.getDescription());
-
-        if(TextUtils.isEmpty(s.toString())) {
-            mSubtext.setVisibility(View.GONE);
-        } else {
-            mSubtext.setVisibility(View.VISIBLE);
-            mSubtext.setText(s.toString());
-        }
-
-        //Set click listener to launch browser and navigate to full
-        //article via provided URL
-        mActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String url = mItem.getArticleUrl();
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                i.addCategory(Intent.CATEGORY_BROWSABLE);
-                startActivity(i);
-
+            //Build details string.
+            StringBuilder s = new StringBuilder();
+            if (mItem.getPublishDate() != null) {
+                s.append(mItem.getDateString(getActivity()));
             }
-        });
 
+            if (mItem.getAuthor() != null) {
+                s.append(String.format(TextUtils.isEmpty(s) ? getString(R.string.by_space) : getString(R.string.space_by_var), mItem.getAuthor()));
+            }
 
-        //FAB animation initiated in transition listener will not be fired
-        //on devices lower than Lollipop, so animate immediately.
-        if(savedInstanceState != null) {
-            mActionButton.setVisibility(View.VISIBLE);
-        } else {
+            //Populate TextViews
+            mTitle.setText(mItem.getTitle());
+            mSummary.setText(mItem.getDescription());
+
+            if (TextUtils.isEmpty(s.toString())) {
+                mSubtext.setVisibility(View.GONE);
+            } else {
+                mSubtext.setVisibility(View.VISIBLE);
+                mSubtext.setText(s.toString());
+            }
+
+            //FAB animation initiated in transition listener will not be fired
+            //on devices lower than Lollipop, so animate immediately.
             if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
                 animateFabIn();
             }
+        } else {
+            mActionButton.setVisibility(View.VISIBLE);
         }
+
 
         //Set shared transition name of header image.
         ViewCompat.setTransitionName(mHeaderImage, mHeaderTransitionName);
@@ -323,7 +310,21 @@ public class DetailsFragment extends Fragment {
 
 
     /**
-     * Perform animation to show the floating action button
+     * Handles action button click and launches
+     * browser to url.
+     */
+    @OnClick(R.id.details_fab)
+    void actionButtonClick() {
+        String url = mItem.getArticleUrl();
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        i.addCategory(Intent.CATEGORY_BROWSABLE);
+        startActivity(i);
+    }
+
+
+    /**
+     * Perform animation to show the floating action button.
      */
     private void animateFabIn() {
         Animation a = AnimationUtils.loadAnimation(getActivity(), R.anim.roll_in_right);

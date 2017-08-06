@@ -32,7 +32,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
-                android:layout_marginTop="16dp"/>
+                android:layout_marginTop="16dp"
+                android:freezesText="true"/>
 
 
             <TextView
@@ -42,7 +43,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/details_title"
                 android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"/>
+                android:layout_marginRight="24dp"
+                android:freezesText="true"/>
 
 
             <TextView
@@ -53,7 +55,8 @@
                 android:layout_below="@+id/details_subtext"
                 android:layout_marginRight="24dp"
                 android:layout_marginLeft="24dp"
-                android:layout_marginTop="16dp"/>
+                android:layout_marginTop="16dp"
+                android:freezesText="true"/>
 
         </RelativeLayout>
 
