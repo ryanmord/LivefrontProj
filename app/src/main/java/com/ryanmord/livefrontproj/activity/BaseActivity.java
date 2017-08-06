@@ -1,11 +1,10 @@
 package com.ryanmord.livefrontproj.activity;
 
 import android.app.FragmentTransaction;
+import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
@@ -116,7 +115,6 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
         Timber.d("Clicked feed item received. Instantiating DetailsFragment...");
         mDetailsFragment = DetailsFragment.newInstance(item.getFeedItem(), ViewCompat.getTransitionName(item.getImage()));
 
-
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         //Check for required Android version for shared element transition.
@@ -145,9 +143,7 @@ public class BaseActivity extends AppCompatActivity implements FeedFragment.IFee
                 .addToBackStack(null)
                 .commit();
 
-
         mBarLayout.setExpanded(true, true);
-
     }
 
 

@@ -62,12 +62,22 @@ public class FeedItem implements Parcelable {
     @SerializedName(KEY_PUBLISH_DATE)
     private DateTime mPublishDate;
 
-
-
+    /**
+     * Tag used to maintain selected item through state changes
+     */
     public static final String TAG = "feed";
 
 
-
+    /**
+     * private constructor
+     *
+     * @param author        Article author
+     * @param title         Article title
+     * @param desc          Article desc
+     * @param articleUrl    Article url
+     * @param imageUrl      Article image url
+     * @param publishDate   Article publish date
+     */
     private FeedItem(String author, String title, String desc, String articleUrl, String imageUrl, DateTime publishDate) {
         mAuthor = author;
         mTitle = title;
@@ -134,15 +144,17 @@ public class FeedItem implements Parcelable {
     }
 
 
-
-
-
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mAuthor);
@@ -163,6 +175,12 @@ public class FeedItem implements Parcelable {
      */
     public static final Parcelable.Creator<FeedItem> CREATOR = new Parcelable.Creator<FeedItem>() {
 
+        /**
+         * Creates FeedItem from given parcel
+         *
+         * @param in    In parcel containing data
+         * @return      Newly instantiated FeedItem
+         */
         public FeedItem createFromParcel(Parcel in) {
 
             String      author = in.readString();
@@ -175,6 +193,12 @@ public class FeedItem implements Parcelable {
             return new FeedItem(author, title, description, articleUrl, imageUrl, publishDate);
         }
 
+        /**
+         * Create new parcelable array
+         *
+         * @param size  Size of array
+         * @return      New array with all entries set to null
+         */
         public FeedItem[] newArray(int size) {
             return new FeedItem[size];
         }
